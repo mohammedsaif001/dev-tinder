@@ -72,11 +72,12 @@ app.patch("/user", async (req, res) => {
     const user = await User.findByIdAndUpdate({ _id: userId }, data, {
       returnDocument: "after", // this will return the updated document
       // returnDocument: "before", // this will return the prev document
+      runValidators: true, // To run the validations this is required as the validations will be working by default for addition onluy
     });
     console.log(user);
     res.send("User updated successfully");
   } catch (err) {
-    res.status(400).send("Something went wrong ");
+    res.status(400).send("UPDATE FAILED:" + err.message);
   }
 });
 
