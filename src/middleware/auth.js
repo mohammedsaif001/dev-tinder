@@ -1,11 +1,26 @@
-const authMiddleWare = (req, res, next) => {
-  const { name } = req.body;
-  console.log(name);
-  if (name === "saif") {
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+
+const userAuth = async (req, res, next) => {
+  try {
+    const {} = req.cookies;
+    if (!token) {
+      throw new Error("Token in not Valid!!!");
+    }
+
+    const decodedObj = await jwt.verify(token, "DEV@Tinder$790");
+
+    const { _id } = decodedObj;
+
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    req.user = user;
     next();
-  } else {
-    res.status(401).send("Unauthorized");
+  } catch (error) {
+    res.status(400).send("ERROR: " + err.message);
   }
 };
 
-module.exports = authMiddleWare;
+module.exports = { userAuth };
